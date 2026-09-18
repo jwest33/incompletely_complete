@@ -1,654 +1,334 @@
-**Incompleteness and metasystems: truth, task adequacy, and the limits of effective reasoning**
+**Incompleteness, language, and mathematical practice: what makes a formal limit matter?**
 
-Research note begun on 17 September 2026; expanded on 18 September 2026. Version 2.0.
+Research note begun on 17 September 2026. Version 3.1, 18 September 2026.
 
-Status: mathematical exposition with explicit hypotheses, proofs, examples, and interpretations. The results assemble standard ideas from logic, computability, and verification; their arrangement and descriptive names are for this note. No claim of mathematical novelty or machine-checked verification is made.
+**Purpose.** The question guiding this investigation is whether Gödel incompleteness tells us something consequential about mathematics as a communicated, interpreted, and developing practice. Establishing the theorem's validity, or listing compatible successes of incomplete theories, does not by itself answer that question.
 
-**Abstract.** A theory can leave some arithmetic questions unanswered while completely resolving a specified class of operational questions. This note makes that distinction precise. Its central characterization is that, for an effectively presented family of questions about an intended structure, **a sound effective theory can answer every question if and only if the family's truth set is decidable**. One-sided certification has the corresponding weaker condition: the answers of that sign must be computably enumerable. These statements concern the existence of a suitable theory, potentially extending a sound base theory; they do not say that an arbitrary fixed theory already proves every answer.
+The earlier draft developed nine useful formal results but changed the direction of the investigation. Those results are preserved in the [technical companion](incompleteness_technical_results.md). They supply constraints and examples. The main document now examines the additional assumptions needed to connect those results to the activity they are supposed to explain.
 
-The examples strengthen this result in two directions. Peano arithmetic can settle every question about any explicitly given finite relational structure encoded inside arithmetic, including unbounded-time reachability in a finite graph. An infinite transition system can also have decidable reachability questions when it admits a supplied, exact finite abstraction. Conversely, general program safety includes true claims that any given sound effective arithmetic theory fails to prove.
+**Working thesis to investigate.** Mathematical expression, interpretation, and justification are interdependent. A formal theory captures a specified arrangement of these activities. Incompleteness constrains that arrangement when its arithmetic content and accepted deductions meet the theorem's hypotheses. To infer a limitation on the wider practice, one must justify treating the arrangement as exhaustive of the relevant means of understanding and justification. To infer practical importance, one must additionally show that the excluded conclusions matter to an independently motivated inquiry.
 
-The metasystem results identify what stronger frameworks can and cannot achieve. A uniformly effective increasing sequence of consistent arithmetic theories remains incomplete at its union. Allowing retractions goes beyond that union argument, but even a computable process that may revise every answer finitely often cannot eventually answer every arithmetic sentence correctly. Finally, Löb's theorem explains the limits of proving the reliability of one's own proof system from within that same system.
+This thesis does not settle whether such an exhaustive account exists. It puts that question, rather than the defense or refutation of a familiar theorem, at the center of the research.
 
-**In everyday language.** A rulebook may answer every question needed to run a particular machine without answering every mathematical question that can be expressed in the rulebook's language. Adding rules can solve old problems. Whether this gives a complete method depends on the questions, on how the new rules are obtained, and on what counts as an answer: a terminating decision, a certificate, or a provisional guess.
+**Status.** This is a developing argument, with explicit conditional propositions and open questions. The formal observations below use standard logic and elementary constructions; no claim of novelty is made. A distinctive contribution would require a more developed account of how changes in language, interpretation, and justification interact. The present revision identifies that work instead of presenting established consequences of incompleteness as its completion.
 
-Theorems 1–3 preserve the main results of version 1.0. Theorems 4–9 develop the stronger direction. The original motivating claims are retained near the end as an argument record, rather than used to determine the conclusions.
+**Minimal notation.** A theory is *consistent* if it proves no contradiction, and *sound for* \(\mathbb N\) if everything it proves is true of the standard natural numbers. Write \(T\vdash\varphi\) when \(T\) proves the sentence \(\varphi\), and \(T\nvdash\varphi\) when it does not. The sentence \(\neg\varphi\) is its negation. A theory is *incomplete* when some sentence has neither a proof nor a refutation. \(\operatorname{Th}(\mathbb N)\) denotes the set of true arithmetic sentences. An *effective* theory has an algorithmically enumerable axiom set and effective proof rules. These definitions are expanded in the companion.
 
-**Definitions and scope.** Work in ordinary classical mathematics, in an ambient metatheory capable of discussing natural numbers, finite strings, and structures; ZFC is one suitable example. This specifies the standpoint of the argument, not a proof that this standpoint is infallible or self-justifying.
+**1. The concern about mathematics and language.**
 
-A formal theory consists of axioms in a specified language, with a specified proof calculus. Write \(T\vdash\varphi\) when a finite proof of the sentence \(\varphi\) exists from those axioms. Write \(\operatorname{Thm}(T)\) for the set of its provable sentences.
+Take *language* provisionally in a broad sense: the shared means by which mathematical claims and reasons become expressible and interpretable. This includes notation and diagrams, and can include explanations, gestures, computational demonstrations, and other representational practices. If language instead means natural-language sentences alone, the claim that all mathematical communication requires it would need a different argument.
 
-A structure \(\mathcal A\) supplies a domain and interpretations of the language's symbols. Write \(\mathcal A\models\varphi\) when \(\varphi\) is true in that structure, and define
+On the broad reading, the concern is that mathematics is not first a self-contained activity and then optionally wrapped in language. Mathematical communication depends on people understanding how expressions are to be used, what they refer to, what counts as the same claim in another representation, and what warrants an inference. Formalization makes some of those commitments explicit. It may also leave interpretive work with the users of the formalization.
+
+**Example.** A diagram shows two triangles sharing a side. The marks do not determine on their own whether lengths are exact, whether apparent angles are assumptions, or whether the drawing is merely illustrative. An algebraic encoding can settle these issues once its interpretation is specified. The encoding and its interpretation are parts of the mathematical activity under discussion. Representability of the diagram is not yet a proof that one formal calculus exhausts all legitimate reasoning about it.
+
+The central question is therefore:
+
+> When a theorem limits what follows within a formal representation, under what conditions does that limit also constrain the practice that creates, interprets, and revises the representation?
+
+Two factual qualifications help locate this question. Gödel's result applies across a class of sufficiently expressive effective theories; it is not confined to one particular choice of arithmetic axioms. It also does not assume that only one metalanguage exists or that mathematics and language are independent entities. Arithmetic's ability to encode expressions and proofs is part of the argument itself. [Moschovakis, *Lecture Notes in Logic*, §§4A–4C](https://www.math.ucla.edu/~ynm/lectures/lnl.pdf).
+
+The issue is consequently the adequacy of a proposed formal description of the wider activity. Merely adding languages need not change that adequacy, while changes in how expressions acquire meaning or warrant may be directly relevant.
+
+**2. Four claims that must not be silently identified.**
+
+| Claim | What it asserts | What it does not establish by itself |
+| --- | --- | --- |
+| Mathematical communication uses shared representations | Claims must be expressed and interpreted to be communicated | A fixed algorithm recognizes every sound mathematical justification |
+| Each finished argument admits a formal reconstruction | Particular arguments can be rendered in specified calculi | One sound effective calculus contains every possible warranted argument |
+| A coupled practice has an effective formal description | Relevant expressions, translations, and accepted inferences can be generated uniformly | The description faithfully captures every means of justification relevant to the inquiry |
+| A formal theory is incomplete | Some expressible sentences have neither proof nor refutation in it | Those sentences are important, frequent, or permanently inaccessible to the practice |
+
+The second distinction contains a quantifier issue. A family of individual formalizations is not automatically a uniformly effective formalization of the family.
+
+For a precise illustration, work temporarily in ordinary classical arithmetic. For every true arithmetic sentence \(\varphi\), the theory
 
 \[
-\operatorname{Th}(\mathcal A)
- = \{\varphi:\varphi\text{ is a sentence and }\mathcal A\models\varphi\}.
+T_\varphi=Q+\varphi
 \]
 
-**Reading the notation.** A sentence is a statement with no free variables. Read \(\neg\varphi\) as “not \(\varphi\),” \(\land\) as “and,” \(\lor\) as “or,” \(\forall\) as “for every,” and \(\exists\) as “there exists.” The symbols \(\to\) and \(\leftrightarrow\) mean “implies” and “if and only if.” Set inclusion \(A\subseteq B\) allows equality; proper inclusion \(A\subsetneq B\) means that \(B\) has something extra. The central distinction is between \(T\vdash\varphi\), a claim about a proof, and \(\mathcal A\models\varphi\), a claim about truth in a specified structure.
+is sound and effectively axiomatized, where \(Q\) is Robinson arithmetic. Nevertheless, no sound effective arithmetic theory proves all those \(\varphi\). Its theorem set would be all arithmetic truth, which is not computably enumerable. Here *computably enumerable* means that an algorithm can list the set's members.
 
-These notions must be distinguished:
-
-| Property | Meaning in this note |
-| --- | --- |
-| Consistency | The theory does not prove a contradiction. |
-| Soundness for \(\mathcal A\) | Every sentence the theory proves is true in \(\mathcal A\). |
-| Syntactic completeness | For every sentence \(\varphi\), the theory proves \(\varphi\) or proves \(\neg\varphi\). |
-| Effective axiomatization | An algorithm can enumerate the axioms; with the usual effective proof rules, the theorems are also computably enumerable. |
-| Decidability of \(\operatorname{Th}(\mathcal A)\) | An algorithm halts on every sentence and correctly determines its truth in \(\mathcal A\). |
-| Adequacy for a query class \(\mathcal C\) | For every \(\varphi\in\mathcal C\), the theory proves the answer that is true in the intended structure. |
-
-Functional success additionally requires a task specification. For a question-answering task, adequacy for \(\mathcal C\) is a useful formalization. Actual performance within a time or memory budget is an additional condition.
-
-Here \(\mathbb N\) means the standard natural numbers with their usual arithmetic. Robinson arithmetic \(Q\) is a small, finitely axiomatized theory sufficient to express basic computation and proof coding. Peano arithmetic \(PA\) adds the usual induction scheme. These are particular formal theories, not names for all mathematical truth. When a theorem assumes soundness, the reference structure is stated explicitly.
-
-A set is **computably enumerable**, abbreviated **c.e.**, if an algorithm can list its members, with repetition allowed. Equivalently, membership can be recognized by a procedure that halts on members and may run forever on nonmembers. A set is **decidable** if one algorithm halts on every input and answers membership correctly. Listing successful computations is possible even when deciding that a computation will never succeed is not.
-
-An effective language has computably recognizable finite expressions and effective syntactic operations, such as forming a negation. All languages used below have this property. Even if an axiom set is only c.e., its theorems can be enumerated: enumerate axioms and systematically interleave all finite derivations from the axioms seen so far. Thus the proof searches below do not assume a decision procedure for axiom membership.
-
-**What counts as a metasystem here?** An *object theory* \(T\) is the theory currently being studied. An *extension* \(U\supseteq T\) retains its axioms and adds others, so every \(T\)-proof remains a \(U\)-proof. A *metatheory* \(M\) reasons about \(T\), for example by coding its sentences and proofs and asking whether a contradiction is provable. These roles can overlap: a stronger arithmetic theory can serve as a metatheory for a weaker one. A rule for generating or revising theories is a further object, a process. The term *metasystem* is used for these specified roles, rather than as an additional mathematical property. Each result states whether it concerns an extension, a metatheoretic assertion, or an evolving process.
-
-**A terminology example.** Suppose a controller has three states. “Can state 2 be reached from state 0?” is a task question. “Does this arithmetic proof calculus decide every sentence in its language?” is a question about the calculus. The controller question may have a complete finite solution even when the answer to the calculus question is no. We use *independent of \(T\)* for a sentence with neither a proof nor a refutation in \(T\), and *algorithmically undecidable* for a problem admitting no total correct decision procedure. These are related but different notions.
-
-Use the following standard background result: every consistent, computably axiomatized first-order theory interpreting Robinson arithmetic \(Q\) is syntactically incomplete. This is the Gödel–Rosser form of the first incompleteness theorem. The interpretation requirement concerns arithmetic expressiveness, not system size or an informal notion of complexity. [Moschovakis, *Lecture Notes in Logic*, Theorem 4C.4, printed p. 151](https://www.math.ucla.edu/~ynm/lectures/lnl.pdf#page=155).
-
-**Theorem 1 — An effective description can be a proper part of a complete semantic theory.**
-
-**Plain-language idea.** The truths about an object and the truths derivable from a chosen rulebook need not coincide. For ordinary arithmetic, every sound effective rulebook leaves out some truths, although each omitted truth can individually be added as a new rule.
-
-Let \(T\) be a computably axiomatized theory in the language of arithmetic, extending \(Q\), and sound for the standard natural numbers \(\mathbb N\). Then:
-
-1. \(\operatorname{Thm}(T)\subsetneq\operatorname{Th}(\mathbb N)\).
-2. \(\operatorname{Th}(\mathbb N)\), called true arithmetic, is consistent, deductively closed, and syntactically complete.
-3. \(\operatorname{Th}(\mathbb N)\) is not computably enumerable.
-4. Every particular true sentence unprovable in \(T\) can be made provable in a sound effective extension of \(T\), but that extension is still incomplete.
-
-**Proof.** Soundness gives the non-strict inclusion in part 1 and implies that \(T\) is consistent. By Gödel–Rosser, some sentence \(\rho\) has neither a proof nor a refutation in \(T\). Classical semantics makes exactly one of \(\rho,\neg\rho\) true in \(\mathbb N\). That true sentence belongs to \(\operatorname{Th}(\mathbb N)\) but not to \(\operatorname{Thm}(T)\). The inclusion is strict.
-
-For part 2, the true sentences cannot include a contradictory pair. Sound inference preserves truth, so they are deductively closed. For each sentence \(\varphi\), either \(\varphi\) or \(\neg\varphi\) is true in \(\mathbb N\); thus one belongs to this theory and is available as an axiom.
-
-For part 3, suppose that true arithmetic were computably enumerable. Taking its sentences as axioms would yield a consistent, effective, complete extension of \(Q\), contradicting Gödel–Rosser.
-
-For part 4, fix a true sentence \(\psi\) unprovable in \(T\). Set \(U=T+\psi\). Appending a single fixed sentence preserves effective axiomatizability. Its axioms remain true in \(\mathbb N\), so \(U\) remains sound, and it proves \(\psi\). Since \(U\) still meets the incompleteness hypotheses, some other sentence is undecided in \(U\). \(\square\)
-
-This gives “partially constituted” a precise possible meaning: the provable content of an effective description is a proper subset of an intended structure's full first-order theory. It does not say that the structure itself lacks parts or fails to exist.
-
-Part 4 is an existence construction. It does not supply an algorithm for recognizing arbitrary true sentences. Adding an assumption is also different from justifying that assumption. A separate argument or metatheory would be needed to warrant a particular addition.
-
-Nor does writing \(\operatorname{Th}(\mathbb N)\) give us a usable all-purpose truth oracle. It defines the complete set semantically. Part 3 states why an effective proof system cannot enumerate it. Even a complete first-order theory need not uniquely characterize its intended infinite structure up to isomorphism; completeness is not categoricity.
-
-**Example.** Let \(G\) be any true arithmetic sentence that \(PA\) does not prove. Then \(PA+G\) proves \(G\), simply because \(G\) is now an axiom. This is a sound extension in the ambient mathematics, but it still misses other truths. The example separates three questions: whether \(G\) is true, whether a particular theory proves it, and whether we have a justified method for selecting it as a new axiom.
-
-**Theorem 2 — Incompleteness does not transfer automatically to a system's functions.**
-
-**Plain-language idea.** A large rulebook may contain an unfinished arithmetic chapter and a completely settled chapter about a finite machine. An unanswered question in the first chapter does not erase the answers in the second.
-
-For every nonempty finite relational structure \(\mathcal A\) in a finite language, there is a consistent, computably axiomatized theory \(T_{\mathcal A}\) such that:
-
-1. \(T_{\mathcal A}\) interprets arithmetic and is incomplete.
-2. Every first-order sentence about the \(\mathcal A\) part alone is correctly decided by \(T_{\mathcal A}\).
-3. Truth for those sentences is uniformly decidable from the finite tables specifying \(\mathcal A\).
-4. The axioms describing the \(\mathcal A\) part characterize it up to isomorphism.
-
-Consequently, the existence of an undecidable sentence somewhere in a formal theory does not entail an unanswered question in every specified operational domain described by that theory.
-
-**Proof.** Suppose the domain of \(\mathcal A\) is \(\{a_1,\ldots,a_n\}\), with \(n\geq1\). Introduce names \(c_1,\ldots,c_n\) for these elements. Construct the following finite axiom set \(D_{\mathcal A}\):
-
-- Distinctness: \(c_i\neq c_j\) for \(i\neq j\).
-- Domain closure: \(\forall x\,(x=c_1\lor\cdots\lor x=c_n)\).
-- Complete relation tables: for each relation symbol \(R\) and each tuple of names of the appropriate length, include the corresponding atomic sentence if it is true in \(\mathcal A\), and its negation otherwise.
-
-If the original language has constants, include equations giving their values among the \(c_i\). Relations of arity zero, if present, receive their truth values in the same way.
-
-Every model of \(D_{\mathcal A}\) has exactly the named elements and the specified relation tables. The map sending \(c_i\) to \(a_i\) is an isomorphism. This proves part 4.
-
-For any formula, domain closure allows each universal quantifier to be replaced by a conjunction over the names and each existential quantifier by a disjunction. Repeating this reduces a sentence to a finite Boolean combination of ground atomic sentences. The tables and distinctness axioms settle every such atom. Hence \(D_{\mathcal A}\) proves the sentence if it is true in \(\mathcal A\), and proves its negation otherwise. This also gives a terminating evaluation algorithm, uniformly from the finite input tables.
-
-Now use two sorts, one for arithmetic and one for \(\mathcal A\), with no symbols connecting the sorts. Put Peano arithmetic \(PA\) on the arithmetic sort and \(D_{\mathcal A}\) on the system sort:
+Thus
 
 \[
-T_{\mathcal A}=PA\;\sqcup\;D_{\mathcal A}.
+\forall\varphi\in\operatorname{Th}(\mathbb N)\;
+\exists T_\varphi\;[T_\varphi\text{ is sound and effective and }
+T_\varphi\vdash\varphi]
 \]
 
-Here \(\sqcup\) means this explicitly disjoint, two-sorted combination. The pair \((\mathbb N,\mathcal A)\), with the specified names, is a model, so the combined theory is consistent. Its axioms are effectively enumerable. It contains an interpretation of \(Q\) on its arithmetic sort. Gödel–Rosser therefore makes it incomplete; the usual effective translation of sorted first-order logic into first-order logic gives the same conclusion.
+does not imply the existence of one sound effective theory proving every such sentence.
 
-Every proof from \(D_{\mathcal A}\) remains a proof in \(T_{\mathcal A}\). The correct decisions and algorithm already established for the system language therefore persist. This proves all four parts. \(\square\)
+This example concerns the quantifiers. Adjoining a true sentence as an axiom does not supply a justification for accepting it, and the example does not identify all truths with actual human knowledge. It shows why the uniformity step requires an argument.
 
-This construction deliberately separates the arithmetic domain from the system domain. That is enough to refute a universal inference from global incompleteness to failure in every domain. It does not establish the same separation for a theory where arithmetic and system behavior are coupled.
+A related distinction concerns finite expression. Every arithmetic truth has a finite expression. The set of arithmetic truths still has no effective enumeration. **Finite communicability is weaker than effective recognition of all correct communications.** The fact that an argument can be expressed through language does not, by itself, give an algorithm that determines which expressions constitute sound arguments.
 
-There is also a direct result requiring no appended arithmetic: \(D_{\mathcal A}\) itself is a finite, consistent, complete description of the named finite structure, and its theorem set is decidable. Thus being a system described within a larger mathematical framework does not itself force incompleteness.
+**3. A model that keeps expression and interpretation together.**
 
-**An operational example.** Let \(\mathcal A=(S,E)\) be a finite transition graph: \(S\) is the state set and \(E(s,t)\) means that a permitted transition takes \(s\) to \(t\). Theorem 2 applies for every finite size, however large.
+To investigate the coupling, represent a mathematical activity by its finite histories. A history \(h\) records the context accumulated so far: expressions introduced, explanations given, accepted assumptions, and changes in interpretation or inferential practice. An expression \(e\) is assessed in that context.
 
-For example, take \(S=\{a,b,c\}\) with exactly the transitions \(a\to b\), \(b\to c\), and \(c\to c\). The formula
+Let \(W\) be the collection of pairs \((h,e)\) for which \(e\) has a warrant treated as conclusive in the relevant history. This is a proposed mathematical model, not an assertion that real mathematical practice has a determinate, infallible acceptance relation. Conjectures, temporary guesses, and incompatible assumptions cannot simply be collected as jointly true conclusions.
+
+To compare arithmetic claims across contexts, introduce a translation
 
 \[
-\exists y\,(E(a,y)\land E(y,c))
+\tau(h,e)\in\operatorname{Sent}(L_{\mathrm{arith}}),
 \]
 
-is true, witnessed by \(b\). The formula
+defined for the warranted arithmetic expressions under consideration. Its intended role is to say which arithmetic claim the contextual expression makes. Whether such translations exist, preserve meaning, and can be obtained effectively are substantive questions.
+
+**Example.** One context introduces a recursively specified numerical sequence; another introduces ordinal notation to reason about its termination. Comparing their conclusions requires identifying the same termination claim in both contexts. Counting two vocabularies gives no answer about what changed in the justification.
+
+**Conditional proposition A — Effective capture of the coupled activity.** Suppose:
+
+1. \(W\) is computably enumerable.
+2. \(\tau\) is computable on every pair in \(W\), with arithmetic sentences as outputs.
+3. Every translated warranted assertion is true in the standard natural numbers.
+
+Then the arithmetic theory
 
 \[
-\exists y\,(E(c,y)\land y\neq c)
+T_{\mathcal P}
+ =Q+\{\tau(h,e):(h,e)\in W\}
 \]
 
-is false, because \(c\)'s only successor is \(c\) itself. The finite description proves the first sentence and the negation of the second.
+is sound, effectively axiomatized, and incomplete.
 
-More generally, reachability in a graph with \(n\) states is decidable: if a path from \(s\) to \(t\) exists, deleting loops gives a path of length at most \(n-1\), allowing length zero when \(s=t\). Search those paths or perform ordinary graph traversal. Whether a specified bad state can ever be reached is therefore decidable as well. This is an unbounded-time reachability claim for a fixed finite graph, not merely a bounded simulation.
+**Proof.** Enumerate \(W\) and interleave the computations of its translations. Each translation on an enumerated pair eventually finishes, so this enumerates the additional axioms. They and the axioms of \(Q\) are true in \(\mathbb N\), giving soundness. Gödel–Rosser applies to the resulting consistent effective extension of \(Q\). \(\square\)
 
-The fixed finite graph and its available transition table are essential assumptions. A family of machines with unbounded memory, an unknown environment, or a language quantifying over arbitrary programs poses a different problem. Large state spaces can also make an existing decision procedure impractical. Decidability does not promise affordable computation.
+**Meaning of the result.** Independence between mathematics and language is unnecessary for this conditional argument. The histories may include their interaction. Multiple representations, communities, and layers of metareasoning do not change the conclusion if their jointly warranted arithmetic content satisfies the three assumptions.
 
-Calling these examples “complex” is an interpretation, not a proved classification. They permit arbitrary finite network size and interaction tables. They establish that those features alone do not imply Gödel incompleteness.
+**What the result leaves open.** It does not establish those assumptions for mathematical practice. In particular:
 
-**Proposition — Undecidability can express underdetermination by the axioms.**
+- Enumerating things people say is different from enumerating all and only their conclusively warranted assertions.
+- Encoding an expression is different from effectively preserving its meaning across contexts.
+- Capturing a particular history is different from capturing the relevant possibilities for future development.
+- Human acceptance is fallible; soundness is an idealization that needs to be identified as such.
 
-**Plain-language idea.** Sometimes a description allows several mathematical situations. A question can then be true in one allowed situation and false in another, although it has a definite answer in the intended situation.
+A limit on \(T_{\mathcal P}\) becomes a limit on the modeled practice only to the extent that its arithmetic warrants are exhaustively captured by this construction. If there are relevant warrants outside that capture, the formal conclusion has not yet been transferred to them. Conversely, claiming that such warrants exist does not demonstrate that humans can reliably transcend every effective theory.
 
-Suppose \(T\) is a consistent first-order theory in a countable language and neither \(\varphi\) nor \(\neg\varphi\) is provable in it. Then there are models \(\mathcal B,\mathcal C\) of \(T\) with
+This is the substantive point to investigate: **which account of warrants and interpretation makes the capture faithful, and what evidence supports that account?**
+
+**4. Communication and final certification are different requirements.**
+
+The previous section can be restated in terms of communicated evidence, without presuming that all arguments use the same visible notation.
+
+**Conditional proposition B — No complete mechanical certification of arithmetic truth.** There is no decidable relation \(V(p,\varphi)\) on finite certificate codes and arithmetic sentence codes satisfying both:
 
 \[
-\mathcal B\models\varphi,\qquad
-\mathcal C\models\neg\varphi.
+V(p,\varphi)\ \Longrightarrow\ \mathbb N\models\varphi,
 \]
 
-**Proof.** If \(T+\varphi\) were inconsistent, the deduction theorem would give \(T\vdash\neg\varphi\), contrary to the hypothesis. Similarly, \(T+\neg\varphi\) is consistent. The first-order completeness theorem supplies a model of each. \(\square\) The model-existence result used here is [Moschovakis, Theorem 1I.1, printed p. 38](https://www.math.ucla.edu/~ynm/lectures/lnl.pdf#page=42).
-
-This is another precise version of the partial-description idea. The axioms leave open alternatives that different models settle differently. An intended model, when one is specified, has its own truth value for \(\varphi\); the original axioms do not settle which alternative holds.
-
-**Example.** A graph description may name two distinct vertices \(a,b\) but say nothing about an edge from \(a\) to \(b\). One model includes that edge; another omits it. Neither \(E(a,b)\) nor its negation follows from the description. Adding the missing table entry resolves this particular ambiguity. This elementary example illustrates underdetermination; Gödel's theorem establishes that suitable effective arithmetic theories cannot eliminate every such undecided sentence while remaining consistent.
-
-The word “complete” in the first-order completeness theorem means that every consequence true in all models of given axioms has a formal proof. It does not mean that those axioms decide every sentence. Consequently, this proposition and Gödel incompleteness are compatible.
-
-**Theorem 3 — Effective accumulation of metasystems remains incomplete.**
-
-**Plain-language idea.** If every new rule is generated by one algorithm, collecting all stages still gives an algorithmically enumerable rulebook. Moving to more stages does not remove the hypotheses of incompleteness.
-
-Let
+and
 
 \[
-T_0\subseteq T_1\subseteq T_2\subseteq\cdots
+\mathbb N\models\varphi\ \Longrightarrow\
+\exists p\;V(p,\varphi).
 \]
 
-be nested consistent axiom sets in a common effective first-order language. Suppose \(T_0\) extends \(Q\), and the axiom sets are uniformly computably enumerable: one algorithm can enumerate all pairs \((n,\alpha)\) with \(\alpha\) an axiom of \(T_n\). Then the union
+**Proof.** Enumerate all finite pairs \((p,\varphi)\), run the stipulated terminating check, and output \(\varphi\) whenever it accepts. Soundness and completeness of certification would make this an enumeration of true arithmetic, contradicting its non-enumerability. \(\square\)
+
+A certificate could encode a diagram, a conventional derivation, or a finite dialogue. That matters only if the proposed verifier can establish its warrant from the encoded material. If validity depends on unformalized interpretation or external facts, the decidable relation \(V\) has not yet been supplied.
+
+This exposes a precise possible significance of incompleteness: it limits a proposal for exhaustive mechanical certification of arithmetic, including proposals that admit several kinds of representation. It does not establish that every worthwhile mathematical activity needs such certification.
+
+The proof uses classical truth in \(\mathbb N\) as its semantic standard. Naming that structure does not give an observer access to truth outside every language or practice. It supplies a mathematical reference for the conditional claim. Whether this semantic framework is the best account of mathematical meaning is a philosophical question the proof does not settle.
+
+**5. Incompleteness supplies no measure of its own practical importance.**
+
+The assertion that a theory leaves some questions open contains no distribution of questions, no account of their importance, and no measure of the cost of changing theories.
+
+A small formal result makes the missing information visible.
+
+**Proposition C — No workload-independent bound on exposure to incompleteness.** Fix a consistent effective arithmetic theory \(T\supseteq Q\). Let \(\mathcal S\) be the set of all arithmetic sentences, and define
 
 \[
-T_\infty=\bigcup_{n\in\mathbb N}T_n
+U_T=\{\varphi\in\mathcal S:
+T\nvdash\varphi\text{ and }T\nvdash\neg\varphi\}.
 \]
 
-is consistent, computably axiomatized, and incomplete.
-
-**Proof.** Enumerate the pairs and discard their first coordinates to enumerate the union's axioms. Any proof of a contradiction from the union uses finitely many axioms. Each belongs to some stage, and the largest of those finitely many stage indices supplies a single \(T_N\) containing them all. That would make \(T_N\) inconsistent. Hence the union is consistent. It contains \(Q\); Gödel–Rosser makes it incomplete. \(\square\)
-
-Uniformity matters. The fact that every stage individually has an effective axiomatization does not mean that the whole sequence can be generated by one algorithm.
-
-For a concrete contrast, effectively list all arithmetic sentences as \(\varphi_0,\varphi_1,\ldots\). Using semantic truth in the metatheory, choose
+For a probability distribution \(\mu\) on \(\mathcal S\), let
 
 \[
-\theta_i=
-\begin{cases}
-\varphi_i,&\mathbb N\models\varphi_i,\\
-\neg\varphi_i,&\mathbb N\not\models\varphi_i.
-\end{cases}
+E_\mu(T)=\mu(U_T).
 \]
 
-Put \(U_n=PA+\{\theta_0,\ldots,\theta_n\}\). Every \(U_n\) is a sound effective theory, since it is a finite extension of \(PA\). The deductive closure of their union is true arithmetic: every true sentence eventually appears, and sound deduction produces only truths.
-
-However, the sequence of selected answers is not effective. If its stage axioms were uniformly enumerable, true arithmetic would be computably enumerable, contrary to Theorem 1. The construction therefore illustrates the exact price of this complete union: an externally specified, non-effective supply of correct answers.
-
-**Example: successively asserting consistency.** Start with \(T_0=PA\) and set
+This is the probability that a sampled question has neither answer provable in \(T\). For every rational \(0<\varepsilon<1\), there are computable probability distributions \(\mu_{\mathrm{low}}\) and \(\mu_{\mathrm{high}}\), each assigning positive probability to every sentence, such that
 
 \[
-T_{n+1}=T_n+\operatorname{Con}(T_n),
-\]
-
-where \(\operatorname{Con}(T_n)\) is the standard arithmetic statement that no \(T_n\)-proof of a contradiction exists. Fix the usual effective proof coding at every stage. In the ambient mathematics, \(PA\) is true in \(\mathbb N\); if \(T_n\) is sound, its consistency statement is true, so \(T_{n+1}\) is sound. The codes of these finite extensions and their consistency sentences can be constructed uniformly. Theorem 3 therefore applies. Each next stage settles its predecessor's consistency, while the union still leaves arithmetic questions undecided. Theorem 9 gives the precise self-consistency restriction behind this example.
-
-The same obstruction applies to an adaptive process whenever all of its accepted axioms can ultimately be enumerated by an ordinary algorithm and their accumulated theory is consistent and contains \(Q\). Changing rules, learning, or adding stages does not by itself establish that these hypotheses fail. If revisions retract axioms, the nested-union proof above need not describe the process; a different formal analysis is then required.
-
-Gödel himself noted, in footnote 48a of his original paper, that the undecidable propositions under discussion could become decidable after suitable higher types were added. The historical observation supports the relativity of particular undecidability results to a framework; it does not assert the existence of a final effective complete framework. [Gödel, 1931, Meltzer translation, printed p. 62, footnote 48a](https://homepages.uc.edu/~martinj/History_of_Logic/Godel/Godel%20%E2%80%93%20On%20Formally%20Undecidable%20Propositions%20of%20Principia%20Mathematica%201931.pdf#page=65).
-
-**Theorem 4 — An exact characterization of effective task adequacy.**
-
-**Plain-language idea.** To settle every question in a family with a sound mechanical proof method, the family must admit a mechanical yes-or-no solution. If we only require certificates for yes answers, it is enough to be able to recognize yes instances eventually. This gives a precise boundary between complete decision and one-sided verification.
-
-Fix a structure \(\mathcal A\) in an effective language \(L\), and a c.e. theory \(B\) sound for \(\mathcal A\). Let
-
-\[
-q:\mathbb N\longrightarrow\operatorname{Sent}(L)
-\]
-
-be a total computable map. The sentence \(q(n)\) is the question with input \(n\). Repetitions are allowed; no algorithm for recognizing the image of \(q\) is assumed. Define its **truth set**
-
-\[
-D_q=\{n\in\mathbb N:\mathcal A\models q(n)\}.
-\]
-
-Then the following characterizations hold:
-
-| Required property of some sound c.e. extension \(U\supseteq B\) | Necessary and sufficient condition |
-| --- | --- |
-| For every \(n\in D_q\), \(U\vdash q(n)\) | \(D_q\) is c.e. |
-| For every \(n\notin D_q\), \(U\vdash\neg q(n)\) | \(\mathbb N\setminus D_q\) is c.e. |
-| For every \(n\), \(U\) proves the true member of \(\{q(n),\neg q(n)\}\) | \(D_q\) is decidable |
-
-Soundness is part of every row. Thus a positive certificate is never issued for a false question, and a negative certificate is never issued for a true one. Different rows initially quantify over possibly different extensions \(U\).
-
-**Proof.** For the first row, suppose a suitable \(U\) exists. On input \(n\), compute \(q(n)\) and enumerate the theorems of \(U\) until that sentence appears. If \(n\in D_q\), the stipulated proof eventually appears. If \(n\notin D_q\), soundness prevents it from appearing. This semidecides \(D_q\), so \(D_q\) is c.e.
-
-Conversely, if \(D_q\) is c.e., enumerate it and adjoin \(q(n)\) each time \(n\) appears:
-
-\[
-U=B+\{q(n):n\in D_q\}.
-\]
-
-Its axioms are c.e. because both enumerations and \(q\) are effective. Every added axiom is true in \(\mathcal A\); therefore \(U\) is sound. It proves every required positive answer. This establishes the first row. Apply the same argument to \(n\mapsto\neg q(n)\) to obtain the second.
-
-For the third row, suppose \(U\) supplies the correct answer for every input. Enumerate its theorems, watching for both \(q(n)\) and \(\neg q(n)\). Adequacy ensures that one appears; soundness ensures that its sign gives the correct answer. This is a total decision procedure for \(D_q\).
-
-Conversely, if \(D_q\) has a decision procedure, compute the correct sign for each \(n\) and take
-
-\[
-U=B+\{q(n):n\in D_q\}
-    +\{\neg q(n):n\notin D_q\}.
-\]
-
-This is a sound c.e. extension with all the required proofs. Equivalently, the first two rows can be combined: a set and its complement are both c.e. exactly when the set is decidable. To prove that last fact directly, run their recognition procedures in parallel until one accepts. \(\square\)
-
-**What is constructive here?** Given a program enumerating \(B\), a program for \(q\), and the indicated decision or enumeration program, the displayed construction effectively produces an axiom enumerator for \(U\). Given an adequate sound theorem enumerator, the proof effectively produces the corresponding solver. It does not produce such programs from a bare semantic assertion that a structure has definite answers.
-
-**Example: a family of bounded searches.** Let \(q(n)\) say that an input graph contains a path of length at most the input bound; encode the graph, endpoints, and bound in \(n\). A finite search decides each question, so a sound effective theory adequate for this entire family exists. There are infinitely many inputs, and their sizes need not have a common bound. What matters is that each input supplies a finite search problem with an effective stopping rule.
-
-**Example: finding a successful run.** Let \(q(n)\) say that program \(n\) eventually halts on empty input. Simulating the program recognizes every yes instance, so the positive answers are c.e. The negative answers are not c.e.; Theorem 6 proves the obstruction. Every successful run can be certified, but there is no sound effective proof method that certifies every nonhalting run as well.
-
-**Corollary 4.1 — Complete task coverage can coexist with arithmetic incompleteness.** If \(B\) is a sound c.e. extension of \(Q\) in the arithmetic language and \(D_q\) is decidable, the extension \(U\) in the third row is adequate for the entire task family and is nevertheless syntactically incomplete, by Gödel–Rosser.
-
-**The quantifier matters.** Theorem 4 asserts the existence of *some* suitable extension. A preselected theory can miss a decidable family. For example, if \(\psi\) is true but unprovable in \(B\), the constant query family \(q(n)=\psi\) has the decidable truth set \(\mathbb N\), but \(B\) answers none of its instances. The sound extension \(B+\psi\) does. Knowing externally that a solver exists is different from identifying the correct solver or proving its correctness within \(B\).
-
-**Theorem 5 — Operational completeness inside arithmetic itself.**
-
-**Plain-language idea.** The separation in Theorem 2 is not necessary. Ordinary arithmetic can directly encode a finite machine and prove the correct answer to every question in its finite-state query language, while remaining incomplete about arithmetic as a whole.
-
-For each explicitly given nonempty finite relational structure \(\mathcal A\) with \(n\) elements, there is a computable translation \(\varphi\mapsto\varphi^{\mathcal A}\) from its first-order sentences to arithmetic sentences such that:
-
-1. \(\mathcal A\models\varphi\) if and only if \(\mathbb N\models\varphi^{\mathcal A}\).
-2. \(PA\) proves \(\varphi^{\mathcal A}\) if it is true, and proves its negation if it is false.
-3. A single algorithm, given the finite tables and \(\varphi\), returns the correct sign and a \(PA\)-proof of that signed translation.
-4. For any fixed finite directed graph \(G\) and vertices \(s,t\), \(PA\) likewise proves the correct answer to the standard arithmetic assertion that a finite path of any length exists from \(s\) to \(t\).
-
-Nevertheless, \(PA\) is incomplete in the ambient mathematics, where \(\mathbb N\models PA\).
-
-**Proof of parts 1–3.** Number the elements \(0,\ldots,n-1\), using \(\bar i\) for the arithmetic numeral denoting \(i\). Replace a relation symbol \(R\) by the finite table formula
-
-\[
-R^{\mathcal A}(x_1,\ldots,x_k)
-=\bigvee_{(i_1,\ldots,i_k)\in R^{\mathcal A}}
-  (x_1=\bar i_1\land\cdots\land x_k=\bar i_k).
-\]
-
-The superscript on the right refers to the relation's table; the left denotes its defining arithmetic formula. An empty disjunction is false and an empty conjunction is true; this also handles relations of arity zero. Translate constants to their numerals, preserve equality and Boolean connectives, and restrict quantifiers to the numbered domain:
-
-\[
-(\exists x\,\eta)^{\mathcal A}
- =\exists x<\bar n\,\eta^{\mathcal A},
+E_{\mu_{\mathrm{low}}}(T)\le\varepsilon,
 \qquad
-(\forall x\,\eta)^{\mathcal A}
- =\forall x<\bar n\,\eta^{\mathcal A}.
+E_{\mu_{\mathrm{high}}}(T)\ge1-\varepsilon.
 \]
 
-Here \(\exists x<t\,\eta\) abbreviates \(\exists x(x<t\land\eta)\), and \(\forall x<t\,\eta\) abbreviates \(\forall x(x<t\to\eta)\). Induction on the original formula proves part 1, including formulas evaluated under assignments in the finite domain.
+Here computability of a distribution means that its individual sentence probabilities can be computed to arbitrary prescribed precision.
 
-For every particular natural number \(n\), \(PA\) proves
+**Proof.** List all arithmetic sentences without repetition as
+\(\varphi_0,\varphi_1,\ldots\), effectively. Set
 
 \[
-\forall x\bigl(x<\bar n\leftrightarrow
- (x=\bar0\lor\cdots\lor x=\overline{n-1})\bigr).
+\nu(\varphi_i)=2^{-(i+1)}.
 \]
 
-Each restricted quantifier can therefore be expanded into a finite disjunction or conjunction. Ground arithmetic equalities can be calculated and proved or refuted in \(PA\). Recursively combining these derivations gives a proof of the true sign of the whole sentence. All steps are effective in the tables and syntax, proving parts 2 and 3.
-
-This is an instance of the more general fact that \(PA\) decides every **closed bounded arithmetic formula**: each quantifier is restricted by an arithmetic term not containing its bound variable. Such formulas are often called \(\Delta_0\) formulas. Once outer variables receive numerical values, each inner bound is a particular finite number, so the same recursive evaluation and proof construction apply.
-
-**Proof of part 4.** Use a standard arithmetic coding of finite sequences to express \(\operatorname{Reach}_G(\bar s,\bar t)\): there exists a code for a finite sequence beginning at \(s\), ending at \(t\), and obeying the graph's table at each step. Paths of length zero are allowed. The finite-sequence operations have their usual representations in \(PA\); one may use their conservative definitional extensions as notation.
-
-If \(t\) is reachable, a particular path supplies a code. Its finite verification yields a \(PA\)-proof of reachability.
-
-If \(t\) is not reachable, compute the finite set \(R_s\) of all vertices reachable from \(s\), and define
+This is a computable probability distribution with positive mass at every sentence. Choose a theorem \(\theta\) of \(T\), such as \(0=0\), and a sentence \(\rho\) independent of \(T\), whose existence follows from Gödel–Rosser. Let \(\delta_\psi\) denote the probability distribution concentrated at the single sentence \(\psi\). Define
 
 \[
-I_s(x)=\bigvee_{v\in R_s}x=\bar v.
+\mu_{\mathrm{low}}=(1-\varepsilon)\delta_\theta+\varepsilon\nu,
+\qquad
+\mu_{\mathrm{high}}=(1-\varepsilon)\delta_\rho+\varepsilon\nu.
 \]
 
-The table calculations yield \(PA\)-proofs that \(I_s(\bar s)\), that \(\neg I_s(\bar t)\), and that
+Both distributions are computable, since the chosen sentences have fixed finite codes, and both have full support. Because \(\theta\notin U_T\) and \(\rho\in U_T\),
 
 \[
-\forall x\forall y\,
- \bigl(I_s(x)\land E_G(x,y)\to I_s(y)\bigr).
+E_{\mu_{\mathrm{low}}}(T)=\varepsilon\nu(U_T)\le\varepsilon,
 \]
 
-The last sentence is provable by finite case analysis using the disjunctive definitions of \(I_s\) and \(E_G\). Induction on position in any coded finite path then proves that every vertex on a path from \(s\) satisfies \(I_s\). No such path can end at \(t\). This constructs a \(PA\)-proof of \(\neg\operatorname{Reach}_G(\bar s,\bar t)\).
-
-The construction is effective: graph traversal supplies either a path or the finite invariant \(I_s\), and both certificates can be translated into proofs. Incompleteness of \(PA\) follows from its soundness and Gödel–Rosser. \(\square\)
-
-**Worked example.** Number the earlier graph's states \(0,1,2\), with edges \(0\to1\), \(1\to2\), and \(2\to2\). Its arithmetic edge formula is
+while
 
 \[
-E_G(x,y)\equiv
-(x=0\land y=1)\lor(x=1\land y=2)\lor(x=2\land y=2).
+E_{\mu_{\mathrm{high}}}(T)
+=1-\varepsilon+\varepsilon\nu(U_T)\ge1-\varepsilon.
 \]
 
-The formula \(\exists y<3\,(E_G(0,y)\land E_G(y,2))\) has witness \(1\). The formula \(\exists y<3\,(E_G(2,y)\land y\ne2)\) is false. Both answers have arithmetic proofs. For the unbounded question “Can 0 ever be reached from 2?”, use the invariant \(I_2(x)\equiv x=2\): it holds initially and every transition preserves it. Induction proves that any number of transitions still leaves the machine at 2.
+No computation of the set \(U_T\), or of its exact probability, is required. \(\square\)
 
-The invariant is a fact that remains true after each step. Its role is to turn infinitely many possible run lengths into one finite proof. This is stronger than simulating the machine for a chosen number of steps and observing no failure.
+**Plain-language example.** Keep the same incomplete theory. One workload mostly asks an elementary arithmetic question and occasionally samples every other possible question. Another mostly asks an independent question and occasionally samples every other possible question. Incompleteness is arbitrarily rare in the first workload and arbitrarily common in the second. Neither workload excludes any question altogether.
 
-**Scope.** “Every question” here means every translated first-order sentence about the supplied finite structure, together with the stated reachability queries. It does not include arbitrary arithmetic sentences merely mentioning a graph code. A sentence such as “this graph has three vertices and \(\psi\)” can inherit the difficulty of an unrelated arithmetic \(\psi\). Nor does an algorithm for producing proofs guarantee small proofs or practical running times.
+These distributions are deliberately constructed; they are not estimates of real mathematics. Their role is to prove that the theorem alone cannot supply such an estimate. The probability of a question is also distinct from its importance: a rare unanswered question could be decisive.
 
-**Theorem 6 — General program safety exceeds every sound effective arithmetic verifier.**
+The measure counts missing proofs, not proofs that exist but are too expensive to find. It therefore separates incompleteness from resource limitations. Nor is a probability based on sentence codes automatically meaningful for mathematical practice: different encodings can assign different weights to equivalent formulations. A relevance argument needs a motivated account of the questions, their meanings, and their stakes.
 
-**Plain-language idea.** A completed computation leaves a finite record that can be checked. A computation that never finishes leaves no final record. This asymmetry becomes an impossibility theorem when the task covers arbitrary programs with unbounded memory.
+**6. A demanding example for the claim that incompleteness is merely artificial.**
 
-Fix an effective enumeration \(M_0,M_1,\ldots\) of programs in a universal model of computation, and an effective encoding of pairs \((e,x)\) by natural numbers. Let
+Goodstein sequences provide a useful test. Starting with a natural number, repeatedly write it in hereditary base notation, increase the base, and subtract one. Each such sequence eventually reaches zero. Kirby and Paris proved that the universal arithmetic assertion of this termination is unprovable in Peano arithmetic. Their statement is about numerical sequences, without mentioning formal provability. [Kirby and Paris, *Accessible Independence Results for Peano Arithmetic*, Theorem 1](https://www.cs.tau.ac.il/~nachumd/term/Kirbyparis.pdf).
+
+For each particular standard starting number, its terminating run is finite. In principle that run can be verified in \(PA\), although it may be extraordinarily long. What \(PA\) lacks is the universal guarantee for every starting number. This last observation follows from finite verification, as explained in the companion.
+
+This example makes the research question harder and more useful. The obstruction need not look like a sentence commenting on its own proof status. But independence from \(PA\) still does not establish inaccessibility to mathematical reasoning: a stronger framework proves the termination theorem. Its significance depends on whether the inquiry concerns individual runs, a universal explanation, the strength of induction, or some application.
+
+The relevant investigation is what the stronger argument contributes, how its additional concepts are justified, and whether their use preserves the original problem's meaning.
+
+**7. Existing work and the contribution still needed.**
+
+The question of relevance is not unexplored. Feferman's 2006 essay explicitly distinguishes the importance of incompleteness within logic from its philosophical significance and its impact elsewhere in mathematics. His assessment of the latter was skeptical. This is a historical position to engage, not a current survey establishing that applications do not exist. [Feferman, *The Impact of the Incompleteness Theorems on Mathematics*](https://math.stanford.edu/~feferman/impact.pdf).
+
+His discussion of conceptual structuralism also examines mathematical concepts and schematic principles whose applications are not fixed once and for all by a chosen formal language. That is a closer predecessor for the present concern about developing expression and interpretation than a catalogue of incomplete theories. [Feferman, *Logic, Mathematics, and Conceptual Structuralism*, especially the discussion of mathematical practice](https://math.stanford.edu/~feferman/papers/Logic_Math_ConceptStructuralism.pdf).
+
+A useful continuation must therefore do more than rename established results. Three concrete investigations are available:
+
+1. **Study a change of representation and justification together.** Trace a mathematical argument as a new language or conceptual apparatus becomes available. Specify which original claims remain the same, what new warrants become admissible, and whether the change is a conservative definition, a new assumption, or a change of subject.
+2. **Test the assumption of exhaustive formal capture.** For an explicitly described practice, distinguish its finished arguments from its rules for admitting future arguments. Establish, or exhibit a failure of, the enumeration and translation assumptions in proposition A. Difficulty constructing a translation alone does not prove that none exists.
+3. **Supply an independent criterion of relevance.** Choose a problem family for mathematical or practical reasons before selecting an independence witness. Determine whether a formal limitation blocks an important proof, an explanation, an algorithm, or only a preferred axiomatization. Proposition C explains why that criterion cannot be read off from incompleteness itself.
+
+One promising case study is the passage from arithmetic descriptions of Goodstein sequences to their ordinal termination argument. It concerns the same numerical question in different representational settings and makes the extra justificatory commitments identifiable. It would be a study of how a limitation is encountered and overcome in practice, not a claim that adding ordinal notation by itself bypasses a theorem.
+
+**8. An effective method can exceed its theory's ability to justify it.**
+
+The distinction between solving particular problems and proving a universal guarantee needs care. There are at least three claims:
+
+1. Every individual instance has a proof in a given theory.
+2. One algorithm produces a proof for every instance.
+3. The theory proves the universally quantified mathematical claim.
+
+Under ordinary effectiveness assumptions, the first actually implies the second. Neither by itself gives the third.
+
+**Proposition D — Instancewise provability admits uniform proof search.** Let \(T\) be an effectively axiomatized theory and let \(n\mapsto q(n)\) be a computable sequence of sentences. If
 
 \[
-H=\{(e,x):M_e\text{ halts on input }x\}.
+\forall n\in\mathbb N,\qquad T\vdash q(n),
 \]
 
-Use the standard arithmetic sentence \(\operatorname{Halt}(\bar e,\bar x)\) asserting the existence of a coded halting computation. Then:
+then there is a total computable function \(f\) that, on input \(n\), returns a \(T\)-proof of \(q(n)\).
 
-1. \(H\) is c.e. and undecidable, and its complement is not c.e.
-2. \(PA\) proves every true sentence \(\operatorname{Halt}(\bar e,\bar x)\).
-3. Every sound c.e. extension \(T\supseteq PA\) fails to prove \(\neg\operatorname{Halt}(\bar e,\bar x)\) for infinitely many nonhalting pairs \((e,x)\). For each such pair, neither sign of its halting sentence is provable in \(T\).
-4. There is no algorithm that, for every program and input, correctly decides whether a designated bad state is ever reached. Every sound c.e. extension of \(PA\) also misses true safety assertions in this family.
+**Proof.** Compute \(q(n)\), enumerate the finite proofs of \(T\), and stop when a proof with that conclusion appears. For c.e. axioms, proofs can carry finite certificates recording when their axioms were enumerated. The hypothesis guarantees termination on every input. The construction is one algorithm, not a separate choice of algorithm for each \(n\). \(\square\)
 
-**Proof.** Simulation semidecides \(H\). Suppose a total decider \(h(e,x)\) for \(H\) existed, returning 1 for halting and 0 for nonhalting. Construct a program \(D\) which, on input \(z\), loops forever if \(h(z,z)=1\) and halts if \(h(z,z)=0\). Let \(d\) be its program index. Applied to \((d,d)\), the decider says that \(D(d)\) halts exactly when the definition makes it not halt, a contradiction. If the complement of \(H\) were c.e., dovetailing its recognizer with the one for \(H\) would decide \(H\). This proves part 1.
+If \(q(n)\) is the numeral instance \(\theta(\bar n)\) of a formula, this argument does not give \(T\vdash\forall x\,\theta(x)\). The assertion that the search terminates on every standard input has been made in the surrounding mathematics.
 
-A halting computation has a particular finite trace. The standard coding permits \(PA\) to verify each step of that trace and then introduce the existential quantifier asserting its existence. This is the same finite-calculation principle used in Theorem 5 and proves part 2. In usual terminology these halting assertions are \(\Sigma_1\) sentences: they assert that a finite certificate exists, with an effectively checkable arithmetic description.
+This is consistent with section 2. There we allowed a *different theory* for each sentence, with no effective way of selecting sound theories. Here one fixed effective theory already proves every instance, so searching that theory suffices.
 
-For part 3, let
+**The Goodstein case developed.** Let \(G(n,t)\) mean that the standard Goodstein sequence starting at \(n\) has reached zero by step \(t\), using its usual arithmetic encoding. The external mathematical facts are
 
 \[
-P_T=\{(e,x):T\vdash\neg\operatorname{Halt}(\bar e,\bar x)\}.
+\forall n\in\mathbb N\;\exists t\;G(n,t),
+\qquad
+PA\nvdash\forall x\,\exists t\,G(x,t).
 \]
 
-This set is c.e. by theorem enumeration. Soundness gives \(P_T\subseteq\overline H\). If \(\overline H\setminus P_T\) were finite, adjoining those finitely many pairs to an enumeration of \(P_T\) would enumerate \(\overline H\), contradicting part 1. Thus infinitely many true nonhalting assertions are unprovable. Their positive halting assertions are false, so soundness prevents proofs of those as well. The finite-set argument is an existence argument; it does not presume that we can identify the missing pairs.
+For each fixed standard \(n\), the finite terminating trace gives a \(PA\)-proof of \(\exists t\,G(\bar n,t)\). Proposition D therefore supplies one effective proof generator for all these instances. There is also the direct algorithm: compute the successive terms and stop at zero. It actually terminates for every input, although \(PA\) cannot prove its totality; for this specified algorithm, the totality assertion is the universal termination statement. The unprovability result is the one cited in section 6; see also [Rathjen, *Goodstein Revisited*](https://arxiv.org/abs/1405.4484).
 
-For part 4, transform any pair \((e,x)\) into a program \(W_{e,x}\) that simulates \(M_e(x)\) and enters a designated bad state exactly if the simulation halts. The transformation is computable and
+**What this changes in the investigation.** In this case incompleteness does not imply that no single effective method can carry out the task. The gap concerns a universal justification within the chosen theory. The method may be too slow to use, but that is a separate limitation.
+
+We should therefore assess three things separately: performance on inputs, the mathematical explanation of that performance, and where the explanation can be justified. Some incompleteness phenomena distinguish these levels. This does not mean that every unprovable sentence is merely a disguised request for self-certification.
+
+**9. How can changing language change what mathematics can do?**
+
+“Use a richer language” covers several different interventions. A new term may abbreviate an old expression. A diagram may make a long argument easier to discover. A new quantifier or induction principle may license conclusions that were unavailable before. A reinterpretation may alter the claim being considered.
+
+**Proposition E — Explicit definitions alone preserve old-language consequences.** Let \(T\) be a first-order theory in language \(L\). Introduce a new relation symbol \(R\), and define it by
 
 \[
-W_{e,x}\text{ reaches bad}\quad\Longleftrightarrow\quad(e,x)\in H.
+U=T+\{\forall\vec x\,[R(\vec x)\leftrightarrow\eta(\vec x)]\},
 \]
 
-A general reachability or safety decider would therefore decide \(H\). With the usual coding, \(PA\) proves this equivalence for the constructed simulator. A \(T\)-proof that \(W_{e,x}\) never reaches bad would give a \(T\)-proof of the corresponding nonhalting assertion. Part 3 supplies pairs for which no such proof exists. \(\square\)
-
-**A concrete interpretation.** Consider a monitor whose failure flag is initially off and is switched on only after a simulated program halts. A failure can be demonstrated by showing the finite simulation that switches the flag. For some monitors the flag never switches, yet a chosen sound effective theory has no proof that it never switches. This is a limitation on general certification, not a claim that the monitor eventually fails.
-
-Theorem 5 and Theorem 6 concern different inputs. In Theorem 5 the complete finite state table is supplied. In Theorem 6 a finite program description may generate infinitely many configurations through unbounded memory. Finite source code does not imply a finite state space. If all relevant memory and environment states really are bounded and explicitly modeled, finite-state reasoning applies again, with whatever computational costs that model entails.
-
-These proofs are the standard computability ingredients behind the task boundary; see [Moschovakis, Chapter 3, on computation and undecidability](https://www.math.ucla.edu/~ynm/lectures/lnl.pdf). Their application here concerns the specified halting and safety queries, not an assertion about all useful programs.
-
-**Theorem 7 — A supplied exact finite abstraction can settle questions about an infinite system.**
-
-**Plain-language idea.** A system can have infinitely many detailed states but only finitely many distinctions relevant to a task. A finite summary suffices when it preserves the possible transitions at that level of observation. Forgetting details is justified only after checking that preservation condition.
-
-Let \((X,\to)\) be a transition system, possibly infinite. Let \((F,\Rightarrow)\) be a nonempty finite directed graph, and let \(\alpha:X\to F\) be a surjective observation map. Assume:
-
-1. **Forward preservation:** if \(x\to y\), then \(\alpha(x)\Rightarrow\alpha(y)\).
-2. **Lifting:** for every \(x\in X\) and \(b\in F\), if \(\alpha(x)\Rightarrow b\), there is \(y\in X\) such that \(x\to y\) and \(\alpha(y)=b\).
-
-For any \(C\subseteq F\), let the concrete target be \(B=\alpha^{-1}(C)\). Then, for every initial state \(x_0\),
+where \(\eta\) is an \(L\)-formula whose free variables are among \(\vec x\). For every \(L\)-sentence \(\varphi\),
 
 \[
-\exists y\in B\;(x_0\to^{*}y)
-\quad\Longleftrightarrow\quad
-\exists b\in C\;(\alpha(x_0)\Rightarrow^{*}b),
+U\vdash\varphi\quad\Longleftrightarrow\quad T\vdash\varphi.
 \]
 
-where \(\to^{*}\) and \(\Rightarrow^{*}\) mean reachability by finitely many steps, including zero. If states have effective encodings, \(\alpha\) is computable, and the finite tables of \(F\) and \(C\) are supplied, this task is decidable uniformly from the initial state and those tables, subject to the two stated conditions.
+**Proof.** In any \(U\)-proof, replace each \(R(\vec t)\) with the corresponding instance of \(\eta\), renaming bound variables when needed. The new defining axiom becomes a logical validity. Original axioms are unchanged, and logical inference is preserved by this substitution. The result is a \(T\)-proof when the conclusion belongs to \(L\). The converse follows because \(U\) contains \(T\). \(\square\)
 
-**Proof.** A concrete finite path maps to an abstract path by forward preservation. If its endpoint is in \(B\), its abstract endpoint lies in \(C\).
+An extension with this property is called *conservative over \(T\) for \(L\)*. The proposition treats a precise, limited kind of linguistic innovation. It does not classify every change of mathematical language as an explicit definition.
 
-Conversely, suppose an abstract path starts at \(\alpha(x_0)\) and ends in \(C\). At each step, lifting supplies a concrete successor with the required next observation. Induction on the finite path length constructs a concrete path from \(x_0\) whose last observation is in \(C\); its last state is therefore in \(B\). This proves the equivalence. Compute \(\alpha(x_0)\) and search the finite graph to decide its right side. \(\square\)
+For an old arithmetic claim to become provable, some change must do more than such an eliminable abbreviation: additional assumptions, stronger inference principles, or extra semantic commitments must contribute. Identifying that contribution is part of explaining the advance.
 
-**Worked example: an unbounded counter.** Let \(X=\mathbb N\) with the sole transition \(n\to n+2\). Observe only parity:
+Yet a conservative change can still matter greatly to a finite reasoner. Introducing the term “even” abbreviates “equal to twice an integer”; it can make a pattern easier to state and recognize without creating additional arithmetic consequences. Likewise, more economical notation can change the amount of information a person must hold and manipulate. Proposition E measures provability, not ease of discovery or understanding.
 
-\[
-\alpha(n)=
-\begin{cases}
-\mathrm{even},&n\text{ is even},\\
-\mathrm{odd},&n\text{ is odd}.
-\end{cases}
-\]
+**A revised question about language.** Does a new representation change the available conclusions, the feasibility of finding them, or what counts as understanding them? These are different forms of mathematical progress. A measure that records only which sentences are provable can miss the latter two. This is a specific way a formal account of *consequences* can fail to be a sufficient account of *activity*, even when it correctly records every consequence.
 
-The finite graph has two vertices and exactly the self-loops \(\mathrm{even}\Rightarrow\mathrm{even}\) and \(\mathrm{odd}\Rightarrow\mathrm{odd}\). Forward preservation holds because adding 2 preserves parity. Lifting holds because every concrete number has its \(+2\) successor. Starting at 2, no odd state is reachable. The counter has infinitely many reachable concrete states, but this safety question is completely resolved by a two-state graph.
+**10. Does accepting a theory involve commitments beyond its deductions?**
 
-The target must respect the observation. “Reach an odd number” does; “reach exactly 0” does not, because parity groups 0 with other even numbers. Indeed, from 2 the counter can reach an even number but cannot reach 0. The theorem gives completeness for the chosen observation-based tasks, not for every question about the counter.
+Using a theory as a hypothetical calculus and endorsing its axioms as true are different activities. The second raises a question about the justification for trusting its inferences. Are assertions expressing that trust already implicit in the endorsement, or do they require a further argument?
 
-**Why lifting cannot simply be dropped.** Take concrete states \(s,u,v,b\) and exactly two edges \(s\to u\) and \(v\to b\). Give \(s\) observation \(A\), both \(u,v\) observation \(M\), and \(b\) observation \(Z\). An abstract graph with edges \(A\Rightarrow M\) and \(M\Rightarrow Z\) preserves every concrete edge. It also has a path from \(A\) to \(Z\), although \(b\) is unreachable from \(s\): the actual intermediate state is \(u\), which has no successor. Lifting fails at \(u\). The abstraction has joined two steps that cannot occur consecutively in a concrete run.
+For a consistent effective extension \(T\) of \(PA\), the familiar candidate is \(\operatorname{Con}(T)\): the standard arithmetic assertion that \(T\) has no proof of a contradiction. The theory does not prove this assertion under the usual hypotheses. Whether a person warranted in accepting \(T\) is thereby warranted in accepting \(\operatorname{Con}(T)\) is an additional question about acceptance and justification.
 
-With forward preservation alone, abstract unreachability still proves concrete unreachability. An abstract path may be spurious, as this example shows. With lifting as well, both answers are exact. The possibility of spurious errors in an overapproximation is a standard issue in verification. [Fredrikson and Platzer, *Lecture Notes on Software Model Checking*, §§1 and 5](https://www.cs.cmu.edu/~15414/f17/lectures/19-software.pdf).
+If such a transition is warranted in a specified account, then identifying the person's commitments with \(\operatorname{Thm}(T)\) omits something that account recognizes. This would be a failure of that proposed identification. It would not establish that the person's full commitments evade every effective description.
 
-**Where the work remains.** The theorem assumes a correct abstraction; it supplies no universal algorithm for discovering one or verifying lifting for arbitrary infinite systems. A method guaranteed to produce a valid exact finite abstraction with computable observations for every program-safety instance would yield the decider forbidden by Theorem 6. A finite abstraction is one sufficient route to a decidable task, not a necessary description of every decidable infinite-state problem. If the concrete reachability questions are effectively translated into arithmetic sentences, Theorem 4 also supplies a sound effective theory adequate for this task family. Getting the relevant abstraction proof inside a particular fixed theory is a further question.
+This question has a developed literature rather than being an unexplored objection. Łełyk and Nicolai propose principles of implicit commitment from which forms of reflection follow, and later extend the analysis to iteration and theories in different languages. Their conclusions depend on the proposed principles; acceptance of those principles is part of the philosophical issue. [*A Theory of Implicit Commitment*](https://link.springer.com/article/10.1007/s11229-022-03601-5), [*Implicit Commitment in a General Setting*](https://arxiv.org/abs/2302.02783).
 
-**Theorem 8 — Retractions do not allow eventual correctness on all arithmetic.**
+The useful research task here is to examine a particular warrant for reflection. Replacing \(T\) with \(T+\operatorname{Con}(T)\) describes what has been added; it does not by itself explain why the addition is justified.
 
-**Plain-language idea.** An evolving system might withdraw old answers instead of accumulating axioms forever. That falls outside Theorem 3. It can be more capable than a terminating decision procedure, but even unrestricted computable revision cannot eventually settle on the right answer to every arithmetic question.
+There is a further constraint. An evolving method can have a fixed effective description. For example, starting with sound \(PA\), the ordinary iteration \(T_{n+1}=T_n+\operatorname{Con}(T_n)\) is uniformly effective. Its union is sound and incomplete, as the companion explains. Continual growth therefore does not by itself demonstrate a failure of effective capture. The claim at issue concerns justified possibilities for extension, not growth alone.
 
-Let \(\ulcorner\varphi\urcorner\) denote the natural-number code of an arithmetic sentence. There is no total computable function
+**11. What would count as further progress?**
 
-\[
-g:\mathbb N\times\mathbb N\longrightarrow\{0,1\}
-\]
+The original either/or question can now be sharpened. Incompleteness may constrain a proposed exhaustive account of conclusions while mathematical activity remains capable of producing more than a particular earlier theory certifies. Some of that activity can itself be effective. Some representational improvements can leave provability unchanged while altering discovery and understanding. These possibilities should be separated before deciding what the theorem limits.
 
-such that, for every arithmetic sentence \(\varphi\), there exists a stage \(S_\varphi\) for which
+A concrete next investigation can follow one transition:
 
-\[
-\forall s\ge S_\varphi,\qquad
-g(\ulcorner\varphi\urcorner,s)=
-\begin{cases}
-1,&\mathbb N\models\varphi,\\
-0,&\mathbb N\not\models\varphi.
-\end{cases}
-\]
+- Fix an arithmetic question whose meaning will be preserved, such as universal Goodstein termination.
+- Identify the initial theory's available instance proofs and effective methods.
+- State the stronger argument and its extra principles explicitly.
+- Distinguish the representation of those principles from the justification for accepting them.
+- Ask which relevant accomplishment was unavailable before: a computation, a uniform proof, an explanation, or a justified endorsement.
 
-No computable bound on \(S_\varphi\) is being demanded. No requirement of consistency or correctness at earlier stages is being imposed. The claim rules out even this weak eventual guarantee for all arithmetic sentences.
+The formal side can establish conservation, unprovability, and the extra strength needed. The interpretive side must explain why the stronger principles belong to the practice and what their use accomplishes. A historical or cognitive study could also address whether the representation changed discovery, but the formal results alone cannot establish that.
 
-**Background lemma: arithmetic can refer to its own sentence codes.** For every arithmetic formula \(F(v)\) with one free variable, the diagonal lemma supplies a sentence \(\delta\) such that
+There is an evidential limit to keep in view. Any finite collection \(F\) of true arithmetic assertions fits inside the sound effective theory \(PA+F\). Thus a finite record of successful mathematical innovations cannot by itself show that no sound effective theory captures them. That observation neither predicts future mathematics nor supplies a faithful model of its methods; it limits one proposed inference from observed success to essential non-effectiveness.
 
-\[
-PA\vdash\delta\leftrightarrow F(\ulcorner\delta\urcorner).
-\]
+**Current assessment.** The paths are not exhausted, but their status differs. The distinction between effective success and internal universal justification can already be demonstrated precisely. The contribution of changes in representation can be analyzed through conservation and proof methods. The proposed connection between justified acceptance and further reflection needs substantive philosophical premises. None of these establishes that mathematical activity is complete, that humans exceed all algorithms, or that incompleteness is irrelevant.
 
-Inside a formula, the corner notation means the numeral for the code. The construction uses the effective operation that substitutes a formula's own code into its free variable; representing that syntactic operation in arithmetic yields the fixed point. This is a precise syntactic construction, not an assumption that arithmetic contains a truth predicate. [Moschovakis, Theorem 4B.14, printed p. 149](https://www.math.ucla.edu/~ynm/lectures/lnl.pdf#page=153).
+**Research question.**
 
-**Proof of Theorem 8.** Suppose such a computable \(g\) exists. Computations have arithmetic descriptions, so let \(O_g(e,s,0)\) be an arithmetic formula true in \(\mathbb N\) exactly when the algorithm for \(g\), on input \((e,s)\), returns 0. Define
+> Does the demand for a single effective, exhaustive account of mathematical justification describe the practice we are trying to understand, or does imposing that demand remove essential features of how mathematical meaning and warrant develop?
 
-\[
-F(e)\equiv\exists N\,\forall s\ge N\;O_g(e,s,0).
-\]
+Both answers require work. If the demand is appropriate for a particular project, incompleteness can be a decisive constraint. If it is inappropriate, a limit on the resulting formalization may have little bearing on that project's actual aims. The dependence of mathematics on shared representation is a reason to investigate this issue; it does not determine the answer in advance.
 
-This says that the answers for the sentence with code \(e\) are eventually always 0. The diagonal lemma gives a sentence \(\delta\) satisfying
+The formal results retained in the companion help police individual inferences. They do not substitute for an account of mathematical practice or demonstrate their own relevance to it.
 
-\[
-\mathbb N\models\delta
-\quad\Longleftrightarrow\quad
-\exists N\,\forall s\ge N\;
-g(\ulcorner\delta\urcorner,s)=0.
-\]
+**Source and revision record.**
 
-The assumed eventual correctness gives
+Version 3.0 restores the inquiry into the significance of incompleteness as the main direction. Version 3.1 develops effective success without internal universal justification, changes of representation, and implicit commitment. Version 2.0's full text and nine numbered theorems are retained in the technical companion. Propositions A–E above are explicitly conditional or elementary derived observations; the broader thesis remains an investigation.
 
-\[
-\exists N\,\forall s\ge N\;
-g(\ulcorner\delta\urcorner,s)=0
-\quad\Longleftrightarrow\quad
-\mathbb N\not\models\delta.
-\]
-
-Together these say that \(\delta\) is true exactly when it is false, a contradiction. \(\square\)
-
-**Reading the diagonal sentence.** Its content is: “This particular answer process eventually keeps calling this sentence false.” If the process settles on false, the sentence correctly describes that behavior and is true. If the process settles on true, it does not eventually keep calling the sentence false, so the sentence is false. Its reference is to a particular computable process, whose behavior arithmetic can describe.
-
-**Example showing that revision still helps.** For a halting question, output 0 until a halting computation has been observed, then output 1 forever:
-
-\[
-g_H(\langle e,x\rangle,s)=
-\begin{cases}
-1,&M_e(x)\text{ halts within }s\text{ steps},\\
-0,&\text{otherwise}.
-\end{cases}
-\]
-
-This is computable. If the program halts, the answer eventually becomes 1; if it never halts, the answer stays 0. Thus every halting question receives an eventually correct answer, despite there being no terminating halting decider. The price is that a current 0 gives no general certificate that it will remain 0. A computable bound on the stabilization stage for every input would turn this procedure into a halting decider, contradicting Theorem 6.
-
-The distinction is between eventual truth and recognizable completion. Theorem 8 says that even eventual truth for all arithmetic is too much to ask of one computable answer process. It concerns the explicit input/output guarantee above; systems with external information not generated by an ordinary algorithm require separate hypotheses. A deterministic learning or rule-revision process with computable data and computation is covered whenever it supplies answers in this form.
-
-**Theorem 9 — Löb's theorem and the boundary of internal self-certification.**
-
-**Plain-language idea.** A theory can check particular proofs and justify particular claims. Establishing within the theory a general rule that its own provability guarantees a given claim is more demanding. Löb's theorem identifies the exact restriction for each sentence.
-
-Let \(T\) be a c.e. extension of \(PA\), and fix its standard arithmetized provability predicate. Write
-
-\[
-\Box\varphi
-\quad\text{for}\quad
-\operatorname{Prov}_T(\ulcorner\varphi\urcorner).
-\]
-
-This is an arithmetic sentence saying that a \(T\)-proof of \(\varphi\) exists. Use a conventional proof coding satisfying the following derivability conditions, for sentences \(\alpha,\beta\):
-
-1. If \(T\vdash\alpha\), then \(T\vdash\Box\alpha\).
-2. \(T\vdash\Box(\alpha\to\beta)\to(\Box\alpha\to\Box\beta)\).
-3. \(T\vdash\Box\alpha\to\Box\Box\alpha\).
-
-The first is a rule about actual proofs. The second formalizes combining a proof of an implication with a proof of its premise. The third formalizes that a proof's existence is itself provable when the proof is available. These conditions concern the specified proof predicate; an arbitrary formula informally called “provable” is not enough. Standard proof coding for c.e. arithmetic theories can include finite enumeration certificates for the axioms used.
-
-For every arithmetic sentence \(\varphi\),
-
-\[
-T\vdash(\Box\varphi\to\varphi)
-\quad\Longleftrightarrow\quad
-T\vdash\varphi.
-\]
-
-The forward implication is Löb's theorem. The reverse implication is ordinary propositional reasoning. See [MIT OpenCourseWare, *The Logic of Provability*, pp. 1–2](https://ocw.mit.edu/courses/24-242-logic-ii-spring-2004/a1710eb936dcfe137dc5e5e0ad61b4f1_provablity_logic.pdf).
-
-**Proof.** Assume \(T\vdash\Box\varphi\to\varphi\). The diagonal lemma supplies a sentence \(\delta\) such that
-
-\[
-T\vdash\delta\leftrightarrow(\Box\delta\to\varphi).
-\]
-
-All implications in the following calculation are derivable in \(T\). From the forward direction of this equivalence, conditions 1 and 2 give
-
-\[
-\Box\delta\to\Box(\Box\delta\to\varphi).
-\]
-
-Condition 2, with \(\alpha=\Box\delta\) and \(\beta=\varphi\), gives
-
-\[
-\Box(\Box\delta\to\varphi)
-\to(\Box\Box\delta\to\Box\varphi).
-\]
-
-Condition 3 gives \(\Box\delta\to\Box\Box\delta\). Combining these three implications yields
-
-\[
-T\vdash\Box\delta\to\Box\varphi.
-\]
-
-Our assumption now yields \(T\vdash\Box\delta\to\varphi\). The reverse direction of the fixed-point equivalence gives \(T\vdash\delta\). Condition 1 therefore gives \(T\vdash\Box\delta\), and the already derived implication gives \(T\vdash\varphi\). Conversely, from a proof of \(\varphi\), propositional logic gives a proof of \(\Box\varphi\to\varphi\). \(\square\)
-
-**Corollary 9.1 — Second incompleteness under the stated hypotheses.** Put \(\bot\equiv(0=1)\), and define
-
-\[
-\operatorname{Con}(T)\equiv\neg\Box\bot.
-\]
-
-If \(T\) is consistent, then \(T\nvdash\operatorname{Con}(T)\). Otherwise \(T\) would prove \(\Box\bot\to\bot\); Löb's theorem would make it prove \(\bot\), contrary to consistency. Soundness is not needed for this corollary: consistency and the stated syntactic hypotheses suffice.
-
-**Example: a program that searches for a contradiction.** Build \(P_T\) to enumerate \(T\)'s proofs and halt when a proof of \(0=1\) appears. If \(T\) is consistent, this program never halts. With the standard coding, \(PA\) proves that its nonhalting is equivalent to \(\operatorname{Con}(T)\). Consequently \(T\) cannot prove this particular nonhalting fact about \(P_T\). Here the missing safety assertion has an explicit construction from the verifier itself.
-
-If \(T\) is sound, the extension \(T+\operatorname{Con}(T)\) is sound and can prove that \(P_T\) never halts. Its own contradiction-search program raises the next consistency question. This gives concrete meaning to the hierarchy in Theorem 3.
-
-**What the self-certification result means.** It concerns the theory's own standard provability predicate and proofs inside that same theory. It does not prevent external proofs of consistency, proofs about weaker proof systems, verification of individual proof objects, or restricted reliability results. For an unproved sentence \(\varphi\), one cannot obtain a new \(T\)-proof merely by first proving in \(T\) that “if \(T\) proves \(\varphi\), then \(\varphi\).” Löb's theorem says that establishing this implication already suffices for a proof of \(\varphi\).
-
-**Synthesis: a specification determines the relevant limit.**
-
-The strongest conclusion of this note is the task characterization in Theorem 4, together with the examples and obstructions that make its hypotheses meaningful:
-
-> For an effectively indexed family of sentences about an intended structure, a sound effective extension of a sound effective base theory can supply every correct answer exactly when the family's truth set is decidable. One-sided complete certification corresponds to computable enumerability of the answers of that sign. This task adequacy can coexist with arithmetic incompleteness. Neither uniformly effective accumulation of consistent arithmetic theories nor computable revision of provisional answers yields complete access to arithmetic truth.
-
-The following comparisons keep the guarantees separate:
-
-| Task or method | What is available | What is not supplied |
-| --- | --- | --- |
-| First-order queries on a supplied finite structure | A correct decision and arithmetic proof for each query | An efficient procedure for every structure and formula size |
-| Unbounded-time reachability in a supplied finite graph | A path certificate or a finite invariant excluding the target | Correctness of an unverified physical model |
-| Observation-based reachability with a supplied exact finite abstraction | A decision even for some infinite-state systems | Automatic discovery of such an abstraction for arbitrary programs |
-| Halting of an arbitrary program | A certificate for every actual halting run | A terminating correct yes-or-no answer on every input |
-| Nonhalting of an arbitrary program | Sound proofs for some cases, including many useful invariants | Complete sound effective certification of every safe case |
-| Provisional answers to halting questions | Eventual correctness by revising 0 to 1 when a run halts | A general signal that a current 0 is final |
-| Provisional answers to all arithmetic sentences | No computable process has the stipulated eventual guarantee | Universal arithmetic truth even with unbounded revision time |
-| Adding \(\operatorname{Con}(T)\) to a sound arithmetic theory \(T\) | A sound extension settling a particular earlier limitation | A final effective arithmetic theory proving its own consistency |
-
-**Example of using the framework.** For a controller, first specify whether a task is “avoid an error in this supplied finite model,” “avoid an error for every memory size,” or “decide safety of arbitrary controller programs.” The first has the construction of Theorem 5. A suitable abstraction may settle a particular instance of the second by Theorem 7. A family of the third kind can contain the reduction in Theorem 6. The word *controller* does not determine the logical difficulty; the model, query family, and quantifiers do.
-
-**Relation to the original motivating thesis.**
-
-> For any effective arithmetic theory \(T\) extending \(Q\) and sound for \(\mathbb N\), its provable content is a proper part of the complete semantic theory \(\operatorname{Th}(\mathbb N)\). This limitation of the description does not entail failure on every specified task: there exist consistent effective incomplete theories that completely and decidably describe a finite operational domain. Stronger frameworks can settle particular earlier questions, while any consistent effective accumulation retaining sufficient arithmetic remains incomplete.
-
-Theorem 1 supplies the first sentence, Theorem 2 supplies the second, and Theorem 3 supplies the limitation in the third. This is a statement about the scope and consequences of incompleteness.
-
-“A metasystem partially constitutes its object” can mean that a chosen language and axiom set determine what is expressible and derivable in a representation. That interpretation is consistent with these results. If it instead means that an external observer causes an otherwise complete effective arithmetic calculus to become incomplete, no such conclusion follows.
-
-In particular, changing notation or recoding proofs cannot remove the obstruction while preserving the hypotheses. The arithmetic theory can encode its own finite proof syntax. A metatheory is where we establish the incompleteness result, but being studied from outside is not an extra defect in the object theory.
-
-Nor does semantic completeness establish metaphysical wholeness. \(\operatorname{Th}(\mathcal A)\) comprises truths in one chosen language about one chosen structure. Additional languages, physical interpretation, and experimental adequacy remain separate questions.
-
-Theorem 9 makes the self-certification restriction precise. Moving a consistency argument to a stronger metatheory changes the proving framework and its assumptions. It can settle an earlier consistency question without supplying unconditional self-certification.
-
-**Preserved candidate arguments and their disposition.**
-
-The original request sought an argument that incompleteness was not functionally valid or applied only to systems partially constituted by metasystems. Version 1.0 separated the supported mathematical claims from the stronger proposed interpretations. The following record preserves that distinction; the results above now organize the investigation around task adequacy, verification, and effective reasoning.
-
-| Candidate claim | Assessment | What can be retained |
-| --- | --- | --- |
-| “A metasystem proves a sentence that the original system cannot, so the incompleteness theorem is false.” | Invalid inference: provability in two different theories has been conflated. | Particular undecidability is relative to the specified theory. |
-| “A complete semantic theory exists, so Gödel's theorem has a counterexample.” | Invalid as a refutation: true arithmetic fails effective axiomatizability. | Completeness and effectiveness are distinct requirements. |
-| “Keep adding each missing truth; the resulting effective system will be complete.” | The effectiveness claim is unsupported. Theorem 3 excludes a consistent effective complete union extending \(Q\). | An externally truth-selected union can be complete, at the cost of a non-effective selection process. |
-| “Allowing revisions will eventually give correct answers to all arithmetic questions.” | False for the computable answer process specified in Theorem 8. | Some undecidable query families, including halting, do admit eventual correct guesses without a recognizable stopping point. |
-| “Complex systems cannot be represented by fixed theories.” | Unproved and too broad; neither “complex” nor “represented” has been specified. | Whether a particular representation meets the incompleteness hypotheses must be checked. |
-| “An incomplete theory cannot correctly operate or analyze a system.” | False as a universal statement, by Theorem 2 and its finite graph example. | Some tasks may still encode genuinely undecidable problems. |
-| “Finite systems are fully understood in practice.” | Too strong: decidability does not guarantee feasible computation, a known transition table, or an accurate physical model. | A specified finite relational structure has the complete finite description constructed above. |
-| “An infinite state space makes every operational task undecidable.” | False: Theorem 7 gives infinite-state systems with exact finite answers to observation-based reachability questions. | The task's observable distinctions and dynamics matter, alongside the number of states. |
-| “The unknown truth value means reality itself is incomplete.” | This moves from a proof-theoretic property to an undefined ontological property. | An axiom system can underdetermine which model is intended. |
-| “These examples show that incompleteness is generally unrepresentative of complex systems.” | Not established: no class of complex systems, distribution, or prevalence criterion was supplied. | They disprove an unrestricted inference from complexity or functional usefulness alone to incompleteness. |
-
-A finite workload also cannot establish universal completeness. If \(F\) is a finite collection of arithmetic questions and \(T\) is sound, adjoining the correct answer to each question produces a sound effective theory adequate for \(F\). But identifying those correct answers may be unavailable, and the resulting theory is still incomplete if it extends \(Q\). This is an existence observation, not an algorithm for solving arbitrary finite lists of hard problems.
-
-**Further mathematical directions.** The next useful strengthening is to add resource bounds to task adequacy. Theorem 4 guarantees termination when a truth set is decidable, but gives no useful bound on proof length, proof-search time, or memory. A sharper analysis would fix a representation and compare the cost of deciding a query with the cost of producing and checking a proof of its answer.
-
-A second direction is abstraction discovery for restricted program classes. Theorem 7 gives explicit conditions to aim for. One can study algorithms that find a suitable abstraction whenever a program belongs to a specified class, or procedures that may fail to finish outside that class. Theorem 6 rules out universal success across arbitrary programs; it leaves substantial room for results about particular languages, dynamics, and observation schemes.
-
-A third direction is composition: when separately verified components interact, determine which interface assumptions preserve the combined safety property. The disjoint combination in Theorem 2 is a base case. Coupled components require a proof that each component maintains the assumptions used by the others. This would turn the informal phrase “system as a whole” into a defined mathematical question about an explicit composition operation.
-
-**Source and verification record.** The arguments above are mathematical derivations and explanatory constructions, not quotations or claims of novel published research. The original background sources were checked on 17 September 2026 and revisited during the expansion on 18 September 2026. Sources for the added material were consulted on 18 September 2026:
-
-- Kurt Gödel, “Über formal unentscheidbare Sätze der Principia Mathematica und verwandter Systeme I” (1931), consulted in B. Meltzer's English translation, *On Formally Undecidable Propositions of Principia Mathematica and Related Systems*. Relevant locations: Proposition VI, printed p. 57; generalization and footnote 48a, printed p. 62. Gödel's original formulation uses stronger consistency assumptions than the later Rosser version used here. [University of Cincinnati hosted translation](https://homepages.uc.edu/~martinj/History_of_Logic/Godel/Godel%20%E2%80%93%20On%20Formally%20Undecidable%20Propositions%20of%20Principia%20Mathematica%201931.pdf).
-- Yiannis N. Moschovakis, *Lecture Notes in Logic*, dated 29 March 2014. Relevant locations: Theorem 1I.1 on first-order completeness, printed p. 38; Chapter 3 on computability; Theorems 4A.4–4A.5 on semantic diagonalization and undefinability of arithmetic truth; Theorem 4B.14 on the syntactic fixed-point lemma, printed p. 149; and Theorem 4C.4 on Gödel–Rosser incompleteness, printed p. 151. The posted document labels itself informal notes; it is used for its explicit theorem statements and proofs. [Author's UCLA notes](https://www.math.ucla.edu/~ynm/lectures/lnl.pdf).
-- Matt Fredrikson and André Platzer, *Lecture Notes on Software Model Checking*, Carnegie Mellon University, 15-414, Fall 2017, Lecture 19. Sections 1 and 5 explain finite approximations of infinite program state spaces and the possibility of spurious errors in an overapproximation. The exact lifting condition and its reachability proof are stated explicitly in Theorem 7 here. [Course notes](https://www.cs.cmu.edu/~15414/f17/lectures/19-software.pdf).
-- MIT OpenCourseWare, *The Logic of Provability*, 24.242 Logic II, Spring 2004, pp. 1–2. Used for the arithmetic provability setting and Löb's principle. Theorem 9 writes out the derivation from the fixed-point lemma and the three specified derivability conditions. [Course notes](https://ocw.mit.edu/courses/24-242-logic-ii-spring-2004/a1710eb936dcfe137dc5e5e0ad61b4f1_provablity_logic.pdf).
-
-The proof review tracked the assumptions on which the conclusions depend:
-
-- Theorems 1–3 retain soundness for statements about intended arithmetic truth, domain closure and negative table entries for finite descriptions, and uniform enumeration and nesting for the union argument.
-- Theorem 4 quantifies over suitable extensions, uses an effective query map, and requires soundness to identify provable answers with true answers.
-- Theorem 5 bounds the finite-domain quantifiers and uses induction with an explicit finite invariant for unbounded path lengths.
-- Theorem 6 distinguishes finite source code from finite state space and uses soundness when excluding false halting proofs.
-- Theorem 7 requires lifting for exactness and restricts its targets to unions of observation classes; forward preservation alone supports only the stated one-sided safety inference.
-- Theorem 8 uses arithmetic definability of a computable process and the diagonal lemma. It assumes eventual correctness for every arithmetic sentence, not a uniform stabilization time.
-- Theorem 9 specifies the provability predicate and its derivability conditions. Consistency suffices for the second-incompleteness corollary; soundness is used separately when asserting that extensions have true axioms.
-
-No proof assistant was used. The graph and counter examples illustrate the constructions; they are not empirical validation of incompleteness or models of all physical systems. Theorems 4–8 are presented as consequences and constructions using standard mathematical ingredients, and Theorem 9 is the classical theorem explicitly named there.
-
-**Revision record.** Version 2.0 retains Theorems 1–3 and their argument history, adds Theorems 4–9 with worked examples, and replaces the original emphasis on refutation with an exact account of task adequacy and its limits. It also distinguishes finite-state reasoning inside arithmetic, one-sided certification, exact abstraction, revisable answers, and internal reflection. Future corrections should identify the affected assertion and its replacement.
+The primary author sources linked above were consulted on 18 September 2026. The Kirby–Paris paper states the Goodstein termination and unprovability results together as Theorem 1; its independence proof is cited, not reproduced here. Rathjen provides a further treatment of Goodstein sequences and unprovability. The Feferman and Łełyk–Nicolai papers are used as identified philosophical analyses, not as demonstrations that the current thesis is correct. Moschovakis supplies the background logic. Propositions D and E have their elementary derivations written out above. No proof assistant was used.
